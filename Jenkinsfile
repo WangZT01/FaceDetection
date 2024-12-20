@@ -17,11 +17,6 @@ pipeline {
                                                message: 'Checking out code...'
                     echo "Environment Variables:"
                     sh 'env'
-                    // Webhook Payload
-                    if (env.GITHUB_PAYLOAD) {
-                        def payload = readJSON text: env.GITHUB_PAYLOAD
-                        echo "Webhook Payload: ${payload}"
-                    }
                 }
             }
         }
