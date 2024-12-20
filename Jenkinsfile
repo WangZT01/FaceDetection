@@ -5,27 +5,35 @@ pipeline {
         REPO = 'WangZT01/FaceDetection'
         GITHUB_TOKEN = credentials('peter-github-ssh')
         GITHUB_CHECK_NAME = 'Jenkins CI'
-
+        CONTEXT_NAME = 'continuous-integration/jenkins'
     }
     stages {
         stage('Debug Webhook') {
             steps {
                 script {
-                    echo "Environment Variables:"
-                    sh 'env' // 打印所有环境变量
 
-                    // 检查 Webhook Payload
+                    setGitHubPullRequestStatus state: 'PENDING',
+                                               context: "${CONTEXT_NAME}",
+                                               message: 'Checking out code...'
+                }
+                script {
+                    echo "Environment Variables:"
+                    sh 'env'
+                    // Webhook Payload
                     if (env.GITHUB_PAYLOAD) {
                         def payload = readJSON text: env.GITHUB_PAYLOAD
                         echo "Webhook Payload: ${payload}"
-                    } else {
-                        echo "No Webhook Payload found."
                     }
                 }
             }
         }
         stage('Run Tests') {
             steps {
+                script {
+                    setGitHubPullRequestStatus state: 'PENDING',
+                                               context: "${CONTEXT_NAME}",
+                                               message: 'Building the project...'
+                }
                 echo "Running tests..."
             }
         }
@@ -34,14 +42,14 @@ pipeline {
         success {
             script {
                 setGitHubPullRequestStatus state: 'SUCCESS',
-                                           context: 'continuous-integration/jenkins',
+                                           context: "${CONTEXT_NAME}",
                                            message: 'Build succeeded!'
             }
         }
         failure {
             script {
                 setGitHubPullRequestStatus state: 'FAILURE',
-                                           context: 'continuous-integration/jenkins',
+                                           context: "${CONTEXT_NAME}",
                                            message: 'Build failed!'
             }
         }

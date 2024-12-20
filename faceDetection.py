@@ -61,6 +61,8 @@ def getFaceData(name):
             cv2.imwrite("./ORL/" + name + os.sep + str(count) + '.jpg', gray[y: y + h, x: x + w])
             cv2.imshow('image', img)
             print("recording face " + str(count))
+
+
         k = cv2.waitKey(1)
         if k == 27:
             break
