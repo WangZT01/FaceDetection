@@ -28,23 +28,10 @@ def preprocessing():
         count = 1
         for i in photos:
 
-
-
-
-
-
-
-
             photo = newPath + os.sep + i
             img = cv2.imread(photo)
             gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             gray = cv2.equalizeHist(gray)
-
-
-
-
-
-
 
             faces = faceDetector.detectMultiScale(gray, 1.3, 5)
             for (x, y, w, h) in faces:
