@@ -15,15 +15,8 @@ pipeline {
                     setGitHubPullRequestStatus state: 'PENDING',
                                                context: "${CONTEXT_NAME}",
                                                message: 'Checking out code...'
-                }
-                script {
                     echo "Environment Variables:"
                     sh 'env'
-                    // Webhook Payload
-                    if (env.GITHUB_PAYLOAD) {
-                        def payload = readJSON text: env.GITHUB_PAYLOAD
-                        echo "Webhook Payload: ${payload}"
-                    }
                 }
             }
         }
@@ -33,8 +26,8 @@ pipeline {
                     setGitHubPullRequestStatus state: 'PENDING',
                                                context: "${CONTEXT_NAME}",
                                                message: 'Building the project...'
+                    echo "Running tests..."
                 }
-                echo "Running tests..."
             }
         }
     }
