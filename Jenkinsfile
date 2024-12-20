@@ -25,6 +25,7 @@ pipeline {
                 script {
                     echo "Environment Variables:"
                     sh 'env'
+                    sh 'sleep 5'
                 }
             }
         }
