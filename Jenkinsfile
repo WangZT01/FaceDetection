@@ -32,9 +32,9 @@ pipeline {
             steps {
                 script {
                     githubPRStatusPublisher(
-                        unstableAs: 'PENDING',
-                        content: 'continuous-integration/jenkins',
-                        buildMessage: 'Build is starting...',
+                        state: 'PENDING',
+                        context: 'continuous-integration/jenkins',
+                        message: 'run-test',
                     )
                 }
             }
