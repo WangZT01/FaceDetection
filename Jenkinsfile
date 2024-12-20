@@ -1,28 +1,63 @@
 pipeline {
     agent any
+    environment {
+        GITHUB_API_URL = 'https://api.github.com'
+        REPO = 'WangZT01/FaceDetection'
+        GITHUB_TOKEN = credentials('github-token-wangzt01') // 使用之前配置的凭据
+    }
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                git branch: 'main', url: 'git@github.com:WangZT01/FaceDetection.git'
             }
         }
-        stage('Build') {
+        stage('Run Tests') {
             steps {
-                echo 'Tests build stage'
-            }
-        }
-        stage('Test') {
-            steps {
-                echo 'Tests test stage'
+                script {
+                    sh """
+                    curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
+                         -H "Content-Type: application/json" \
+                         -d '{
+                                "state": "pending",
+                                "description": "Tests are running...",
+                                "context": "continuous-integration/jenkins"
+                             }' \
+                         $GITHUB_API_URL/repos/$REPO/statuses/$GIT_COMMIT
+                    """
+                }
+
+                sh 'echo Running tests...'
             }
         }
     }
     post {
         success {
-            echo 'Tests Passed'
+            script {
+                sh """
+                curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
+                     -H "Content-Type: application/json" \
+                     -d '{
+                            "state": "success",
+                            "description": "All tests passed",
+                            "context": "continuous-integration/jenkins"
+                         }' \
+                     $GITHUB_API_URL/repos/$REPO/statuses/$GIT_COMMIT
+                """
+            }
         }
         failure {
-            echo 'Tests Failed'
+            script {
+                sh """
+                curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
+                     -H "Content-Type: application/json" \
+                     -d '{
+                            "state": "failure",
+                            "description": "Tests failed",
+                            "context": "continuous-integration/jenkins"
+                         }' \
+                     $GITHUB_API_URL/repos/$REPO/statuses/$GIT_COMMIT
+                """
+            }
         }
     }
 }
