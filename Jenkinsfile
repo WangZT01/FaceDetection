@@ -12,7 +12,7 @@ pipeline {
         stage('Set Pending Status') {
             steps {
                 script {
-                    githubPRStatusPublisher(
+                    setGitHubPullRequestStatus(
                         state: 'PENDING',
                         context: 'continuous-integration/jenkins-1',
                         message: 'Debug',
