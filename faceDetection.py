@@ -10,6 +10,11 @@ def mkdir(path):
         print("---  new folder...  ---")
         print("---  OK  ---")
 
+
+
+
+
+
 def preprocessing():
     filepath = './FaceData/photos/'
     fileList = os.listdir(filepath)
