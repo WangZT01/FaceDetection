@@ -72,5 +72,4 @@ def getFaceData(name):
 if __name__ == '__main__':
 
     #getFace("peter")
-    #renameData
     preprocessing()
