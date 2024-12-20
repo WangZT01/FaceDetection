@@ -4,6 +4,8 @@ pipeline {
         GITHUB_API_URL = 'https://api.github.com'
         REPO = 'WangZT01/FaceDetection'
         GITHUB_TOKEN = credentials('peter-github-ssh')
+        GITHUB_CHECK_NAME = 'Jenkins CI'
+
     }
     stages {
         stage('Debug Webhook') {
@@ -31,32 +33,20 @@ pipeline {
     post {
         success {
             script {
-                // 通知 GitHub 状态为成功
-                sh """
-                curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
-                     -H "Content-Type: application/json" \
-                     -d '{
-                            "state": "success",
-                            "description": "All tests passed",
-                            "context": "continuous-integration/jenkins"
-                         }' \
-                     $GITHUB_API_URL/repos/$REPO/statuses/$GIT_COMMIT
-                """
+                publishChecks name: env.GITHUB_CHECK_NAME,
+                              status: 'COMPLETED',
+                              conclusion: 'SUCCESS',
+                              summary: 'Build and tests passed successfully!',
+                              text: 'All tests passed and the build completed successfully.'
             }
         }
         failure {
             script {
-                // 通知 GitHub 状态为失败
-                sh """
-                curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
-                     -H "Content-Type: application/json" \
-                     -d '{
-                            "state": "failure",
-                            "description": "Tests failed",
-                            "context": "continuous-integration/jenkins"
-                         }' \
-                     $GITHUB_API_URL/repos/$REPO/statuses/$GIT_COMMIT
-                """
+                publishChecks name: env.GITHUB_CHECK_NAME,
+                              status: 'COMPLETED',
+                              conclusion: 'FAILURE',
+                              summary: 'Build or tests failed.',
+                              text: 'Some tests failed or the build did not complete successfully.'
             }
         }
     }
