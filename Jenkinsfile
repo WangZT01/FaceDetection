@@ -5,45 +5,43 @@ pipeline {
         REPO = 'WangZT01/FaceDetection'
         GITHUB_TOKEN = credentials('peter-github-ssh')
         GITHUB_CHECK_NAME = 'Jenkins CI'
-        CONTEXT_NAME = 'continuous-integration/jenkins'
+        GITHUB_CONTEXT = 'continuous-integration/jenkins'
     }
     stages {
-        stage('Debug Webhook') {
+        stage('Start Build') {
             steps {
                 script {
-
-                    githubPRStatusPublisher state: 'PENDING',
-                                               context: "${CONTEXT_NAME}",
-                                               message: 'Checking out code...'
-                    echo "Environment Variables:"
-                    sh 'env'
+                    githubNotify context: "${GITHUB_CONTEXT}",
+                                 status: 'PENDING',
+                                 description: 'Build is starting'
                 }
+                echo 'Building...'
             }
         }
         stage('Run Tests') {
             steps {
                 script {
-                    githubPRStatusPublisher state: 'PENDING',
-                                               context: "${CONTEXT_NAME}",
-                                               message: 'Building the project...'
-                    echo "Running tests..."
+                    githubNotify context: "${GITHUB_CONTEXT}",
+                                 status: 'PENDING',
+                                 description: 'Tests are running'
                 }
+                echo 'Running tests...'
             }
         }
     }
     post {
         success {
             script {
-                githubPRStatusPublisher state: 'SUCCESS',
-                                           context: "${CONTEXT_NAME}",
-                                           message: 'Build succeeded!'
+                githubNotify context: "${GITHUB_CONTEXT}",
+                             status: 'SUCCESS',
+                             description: 'Build succeeded'
             }
         }
         failure {
             script {
-                githubPRStatusPublisher state: 'FAILURE',
-                                           context: "${CONTEXT_NAME}",
-                                           message: 'Build failed!'
+                githubNotify context: "${GITHUB_CONTEXT}",
+                             status: 'FAILURE',
+                             description: 'Build failed'
             }
         }
     }
