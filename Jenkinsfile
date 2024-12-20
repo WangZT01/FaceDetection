@@ -5,43 +5,67 @@ pipeline {
         REPO = 'WangZT01/FaceDetection'
         GITHUB_TOKEN = credentials('peter-github-ssh')
         GITHUB_CHECK_NAME = 'Jenkins CI'
-        GITHUB_CONTEXT = 'continuous-integration/jenkins'
+        CONTEXT_NAME = 'continuous-integration/jenkins'
+        GITHUB_CREDENTIALS = 'peter-github-ssh'
     }
     stages {
-        stage('Start Build') {
+        stage('Set Pending Status') {
             steps {
                 script {
-                    githubNotify context: "${GITHUB_CONTEXT}",
-                                 status: 'PENDING',
-                                 description: 'Build is starting'
+                    setGitHubPullRequestStatus(
+                        state: 'PENDING',
+                        context: 'continuous-integration/jenkins',
+                        message: 'Debug',
+                        credentialsId: "${GITHUB_CREDENTIALS}"
+                    )
                 }
-                echo 'Building...'
+            }
+        }
+        stage('Debug Webhook') {
+            steps {
+                script {
+                    echo "Environment Variables:"
+                    sh 'env'
+                }
+            }
+        }
+        stage('Set Pending Status - run') {
+            steps {
+                script {
+                    setGitHubPullRequestStatus(
+                        state: 'PENDING',
+                        context: 'continuous-integration/jenkins',
+                        message: 'Build is starting...',
+                        credentialsId: "${GITHUB_CREDENTIALS}"
+                    )
+                }
             }
         }
         stage('Run Tests') {
             steps {
-                script {
-                    githubNotify context: "${GITHUB_CONTEXT}",
-                                 status: 'PENDING',
-                                 description: 'Tests are running'
-                }
-                echo 'Running tests...'
+                echo "Running tests..."
             }
         }
     }
     post {
         success {
             script {
-                githubNotify context: "${GITHUB_CONTEXT}",
-                             status: 'SUCCESS',
-                             description: 'Build succeeded'
+                setGitHubPullRequestStatus(
+                    state: 'SUCCESS',
+                    context: 'continuous-integration/jenkins',
+                    message: 'Build succeeded!',
+                    credentialsId: "${GITHUB_CREDENTIALS}"
+                )
             }
         }
         failure {
             script {
-                githubNotify context: "${GITHUB_CONTEXT}",
-                             status: 'FAILURE',
-                             description: 'Build failed'
+                setGitHubPullRequestStatus(
+                    state: 'FAILURE',
+                    context: 'continuous-integration/jenkins',
+                    message: 'Build failed!',
+                    credentialsId: "${GITHUB_CREDENTIALS}"
+                )
             }
         }
     }
