@@ -15,8 +15,6 @@ pipeline {
                     setGitHubPullRequestStatus state: 'PENDING',
                                                context: "${CONTEXT_NAME}",
                                                message: 'Checking out code...'
-                }
-                script {
                     echo "Environment Variables:"
                     sh 'env'
                     // Webhook Payload
@@ -33,8 +31,8 @@ pipeline {
                     setGitHubPullRequestStatus state: 'PENDING',
                                                context: "${CONTEXT_NAME}",
                                                message: 'Building the project...'
+                    echo "Running tests..."
                 }
-                echo "Running tests..."
             }
         }
     }
