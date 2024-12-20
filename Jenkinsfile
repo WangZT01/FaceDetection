@@ -33,20 +33,16 @@ pipeline {
     post {
         success {
             script {
-                publishChecks name: env.GITHUB_CHECK_NAME,
-                              status: 'COMPLETED',
-                              conclusion: 'SUCCESS',
-                              summary: 'Build and tests passed successfully!',
-                              text: 'All tests passed and the build completed successfully.'
+                setGitHubPullRequestStatus state: 'SUCCESS',
+                                           context: 'continuous-integration/jenkins',
+                                           message: 'Build succeeded!'
             }
         }
         failure {
             script {
-                publishChecks name: env.GITHUB_CHECK_NAME,
-                              status: 'COMPLETED',
-                              conclusion: 'FAILURE',
-                              summary: 'Build or tests failed.',
-                              text: 'Some tests failed or the build did not complete successfully.'
+                setGitHubPullRequestStatus state: 'FAILURE',
+                                           context: 'continuous-integration/jenkins',
+                                           message: 'Build failed!'
             }
         }
     }
