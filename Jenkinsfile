@@ -23,7 +23,6 @@ pipeline {
         stage('Run Tests') {
             steps {
                 echo "Running tests..."
-                sh 'python test_script.py' // 替换为你的实际测试命令
             }
         }
     }
