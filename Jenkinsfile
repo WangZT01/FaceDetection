@@ -4,56 +4,82 @@ pipeline {
         GITHUB_API_URL = 'https://api.github.com'
         REPO = 'WangZT01/FaceDetection'
         GITHUB_TOKEN = credentials('peter-github-ssh')
-        GITHUB_CHECK_NAME = 'Jenkins CI'
-        CONTEXT_NAME = 'continuous-integration/jenkins'
         GITHUB_CREDENTIALS = 'peter-github-ssh'
     }
+
     stages {
-        stage('Set Pending Status') {
+        stage('Initialize') {
             steps {
                 script {
                     setGitHubPullRequestStatus(
                         state: 'PENDING',
-                        context: 'continuous-integration/jenkins-1',
-                        message: 'Debug',
+                        context: 'continuous-integration/jenkins/init',
+                        message: 'Pipeline initialization in progress'
+                    )
+
+                    echo "Initializing pipeline..."
+                    sleep 2
+
+                    setGitHubPullRequestStatus(
+                        state: 'SUCCESS',
+                        context: 'continuous-integration/jenkins/init',
+                        message: 'Pipeline initialized successfully'
                     )
                 }
             }
         }
-        stage('Debug Webhook') {
+
+        stage('Environment Setup') {
             steps {
                 script {
+                    setGitHubPullRequestStatus(
+                        state: 'PENDING',
+                        context: 'continuous-integration/jenkins/setup',
+                        message: 'Setting up environment'
+                    )
+
                     echo "Environment Variables:"
                     sh 'env'
-                    sh 'sleep 5'
-                }
-            }
-        }
-        stage('Set Pending Status - run') {
-            steps {
-                script {
-                    githubPRStatusPublisher(
-                        state: 'PENDING',
-                        context: 'continuous-integration/jenkins-2',
-                        message: 'run-test',
+                    sleep 5
+
+                    setGitHubPullRequestStatus(
+                        state: 'SUCCESS',
+                        context: 'continuous-integration/jenkins/setup',
+                        message: 'Environment setup completed'
                     )
                 }
             }
         }
+
         stage('Run Tests') {
             steps {
-                echo "Running tests..."
-                sh 'sleep 10'
+                script {
+                    setGitHubPullRequestStatus(
+                        state: 'PENDING',
+                        context: 'continuous-integration/jenkins/tests',
+                        message: 'Running tests'
+                    )
+
+                    echo "Running tests..."
+                    sleep 10
+
+                    setGitHubPullRequestStatus(
+                        state: 'SUCCESS',
+                        context: 'continuous-integration/jenkins/tests',
+                        message: 'Tests completed successfully'
+                    )
+                }
             }
         }
     }
+
     post {
         success {
             script {
                 setGitHubPullRequestStatus(
                     state: 'SUCCESS',
-                    context: 'continuous-integration/jenkins-success',
-                    message: 'Build succeeded!',
+                    context: 'continuous-integration/jenkins',
+                    message: 'All stages completed successfully'
                 )
             }
         }
@@ -61,8 +87,8 @@ pipeline {
             script {
                 setGitHubPullRequestStatus(
                     state: 'FAILURE',
-                    context: 'continuous-integration/jenkins-failed',
-                    message: 'Build failed!',
+                    context: 'continuous-integration/jenkins',
+                    message: 'Pipeline failed'
                 )
             }
         }
