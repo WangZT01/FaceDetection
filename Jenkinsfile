@@ -6,21 +6,18 @@ pipeline {
         GITHUB_TOKEN = credentials('peter-github-ssh')
     }
     stages {
-        stage('Parse PR Review Event') {
+        stage('Debug Webhook') {
             steps {
                 script {
-                    // 解析 Webhook Payload，检查是否为 PR Review 创建事件
+                    echo "Environment Variables:"
+                    sh 'env' // 打印所有环境变量
+
+                    // 检查 Webhook Payload
                     if (env.GITHUB_PAYLOAD) {
                         def payload = readJSON text: env.GITHUB_PAYLOAD
-                        if (payload.action == 'submitted' && payload.review) {
-                            echo "Pull Request Review Created: Starting tests..."
-                        } else {
-                            echo "Not a PR Review creation event. Skipping build."
-                            currentBuild.result = 'NOT_BUILT'
-                            return
-                        }
+                        echo "Webhook Payload: ${payload}"
                     } else {
-                        error "No Webhook Payload found."
+                        echo "No Webhook Payload found."
                     }
                 }
             }
