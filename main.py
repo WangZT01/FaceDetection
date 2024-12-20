@@ -99,11 +99,6 @@ def recognize(database, testImage, eigenface, m, A):
         distance.append(temp)
 
 
-
-
-
-
-
     minDistance = min(distance)
     index = distance.index(minDistance)
     print("The result is: ", database[index])
