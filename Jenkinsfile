@@ -12,7 +12,7 @@ pipeline {
         stage('Set Pending Status') {
             steps {
                 script {
-                    githubPRStatusPublisher(
+                    setGitHubPullRequestStatus(
                         state: 'PENDING',
                         context: 'continuous-integration/jenkins',
                         message: 'Debug',
@@ -49,18 +49,18 @@ pipeline {
         success {
             script {
                 githubPRStatusPublisher(
-                    unstableAs: 'SUCCESS',
-                    content: 'continuous-integration/jenkins',
-                    buildMessage: 'Build succeeded!',
+                    state: 'SUCCESS',
+                    context: 'continuous-integration/jenkins',
+                    message: 'Build succeeded!',
                 )
             }
         }
         failure {
             script {
                 githubPRStatusPublisher(
-                    unstableAs: 'FAILURE',
-                    content: 'continuous-integration/jenkins',
-                    buildMessage: 'Build failed!',
+                    state: 'FAILURE',
+                    context: 'continuous-integration/jenkins',
+                    message: 'Build failed!',
                 )
             }
         }
