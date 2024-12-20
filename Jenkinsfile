@@ -13,10 +13,9 @@ pipeline {
             steps {
                 script {
                     setGitHubPullRequestStatus(
-                        state: 'PENDING',
-                        context: 'continuous-integration/jenkins',
-                        message: 'Debug',
-                        credentialsId: "${GITHUB_CREDENTIALS}"
+                        unstableAs: 'PENDING',
+                        content: 'continuous-integration/jenkins',
+                        buildMessage: 'Debug',
                     )
                 }
             }
@@ -33,10 +32,9 @@ pipeline {
             steps {
                 script {
                     setGitHubPullRequestStatus(
-                        state: 'PENDING',
-                        context: 'continuous-integration/jenkins',
-                        message: 'Build is starting...',
-                        credentialsId: "${GITHUB_CREDENTIALS}"
+                        unstableAs: 'PENDING',
+                        content: 'continuous-integration/jenkins',
+                        buildMessage: 'Build is starting...',
                     )
                 }
             }
@@ -51,20 +49,18 @@ pipeline {
         success {
             script {
                 setGitHubPullRequestStatus(
-                    state: 'SUCCESS',
-                    context: 'continuous-integration/jenkins',
-                    message: 'Build succeeded!',
-                    credentialsId: "${GITHUB_CREDENTIALS}"
+                    unstableAs: 'SUCCESS',
+                    content: 'continuous-integration/jenkins',
+                    buildMessage: 'Build succeeded!',
                 )
             }
         }
         failure {
             script {
                 setGitHubPullRequestStatus(
-                    state: 'FAILURE',
-                    context: 'continuous-integration/jenkins',
-                    message: 'Build failed!',
-                    credentialsId: "${GITHUB_CREDENTIALS}"
+                    unstableAs: 'FAILURE',
+                    content: 'continuous-integration/jenkins',
+                    buildMessage: 'Build failed!',
                 )
             }
         }
