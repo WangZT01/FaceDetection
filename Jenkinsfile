@@ -3,7 +3,7 @@ pipeline {
     environment {
         GITHUB_API_URL = 'https://api.github.com'
         REPO = 'WangZT01/FaceDetection'
-        GITHUB_TOKEN = credentials('github-token-wangzt01') // 使用之前配置的凭据
+        GITHUB_TOKEN = credentials('Jenkins-Github-SSH-WangZT01	')
     }
     stages {
         stage('Checkout') {
