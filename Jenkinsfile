@@ -11,6 +11,13 @@ pipeline {
                 git branch: 'main', url: 'git@github.com:WangZT01/FaceDetection.git'
             }
         }
+        stage('Debug Webhook') {
+            steps {
+                script {
+                    echo "Webhook Payload: ${env.GITHUB_PAYLOAD}"
+                }
+            }
+        }
         stage('Run Tests') {
             steps {
                 script {
