@@ -42,13 +42,14 @@ pipeline {
         stage('Run Tests') {
             steps {
                 echo "Running tests..."
+                sh 'sleep 10'
             }
         }
     }
     post {
         success {
             script {
-                githubPRStatusPublisher(
+                setGitHubPullRequestStatus(
                     state: 'SUCCESS',
                     context: 'continuous-integration/jenkins',
                     message: 'Build succeeded!',
@@ -57,7 +58,7 @@ pipeline {
         }
         failure {
             script {
-                githubPRStatusPublisher(
+                setGitHubPullRequestStatus(
                     state: 'FAILURE',
                     context: 'continuous-integration/jenkins',
                     message: 'Build failed!',
