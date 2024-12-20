@@ -3,36 +3,34 @@ pipeline {
     environment {
         GITHUB_API_URL = 'https://api.github.com'
         REPO = 'WangZT01/FaceDetection'
-        GITHUB_TOKEN = credentials('Jenkins-Github-SSH-WangZT01	')
+        GITHUB_TOKEN = credentials('peter-github-ssh')
     }
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'git@github.com:WangZT01/FaceDetection.git'
+                script {
+                    // 检查是否为 Pull Request 构建
+                    if (env.CHANGE_ID) {
+                        echo "Building Pull Request: ${env.CHANGE_ID}"
+                    } else {
+                        echo "Building branch: ${env.BRANCH_NAME}"
+                    }
+                }
+                // 拉取代码
+                checkout scm
             }
         }
         stage('Run Tests') {
             steps {
-                script {
-                    sh """
-                    curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
-                         -H "Content-Type: application/json" \
-                         -d '{
-                                "state": "pending",
-                                "description": "Tests are running...",
-                                "context": "continuous-integration/jenkins"
-                             }' \
-                         $GITHUB_API_URL/repos/$REPO/statuses/$GIT_COMMIT
-                    """
-                }
-
-                sh 'echo Running tests...'
+                echo "Running tests..."
+                sh 'python test_script.py' // 替换为你的实际测试命令
             }
         }
     }
     post {
         success {
             script {
+                // 通知 GitHub 状态为成功
                 sh """
                 curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
                      -H "Content-Type: application/json" \
@@ -47,6 +45,7 @@ pipeline {
         }
         failure {
             script {
+                // 通知 GitHub 状态为失败
                 sh """
                 curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
                      -H "Content-Type: application/json" \
