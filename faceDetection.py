@@ -1,24 +1,14 @@
 import cv2
 import os
-import numpy as np
 
 
-def renameData():
-    filepath = './FaceData/photos/'
+def mkdir(path):
+    folder = os.path.exists(path)
 
-    fileList = os.listdir(filepath)
-    for file in fileList:
-        n = 0
-        newPath = './FaceData/photos/' + file
-        photos = os.listdir(newPath)
-
-        for i in photos:
-            print(i)
-            oldname = newPath + os.sep + i
-            newname = newPath + os.sep + str(n + 1) + '.jpg'
-            os.rename(oldname, newname)
-            print(oldname, '=>', newname)
-            n += 1
+    if not folder:
+        os.makedirs(path)
+        print("---  new folder...  ---")
+        print("---  OK  ---")
 
 def preprocessing():
     filepath = './FaceData/photos/'
@@ -47,20 +37,7 @@ def preprocessing():
 
 
 
-def img_resize(image):
-    height, width = image.shape[0], image.shape[1]
-    width_new = 112
-    height_new = 96
-    if width / height >= width_new / height_new:
-        img_new = cv2.resize(image, (width_new, int(height * width_new / width)))
-    else:
-        img_new = cv2.resize(image, (int(width * height_new / height), height_new))
-    return img_new
-
-
-
-
-def getFace(name):
+def getFaceData(name):
     camera = cv2.VideoCapture(0)
 
     faceDetector = cv2.CascadeClassifier('haarcascade_frontalface_alt2.xml')
@@ -75,17 +52,20 @@ def getFace(name):
         for (x, y, w, h) in faces:
             cv2.rectangle(img, (x, y), (x + w, y + w), (255, 0, 0))
             count += 1
-            cv2.imwrite("Facedata/User/" + str(count) + '.jpg', gray[y: y + h, x: x + w])
-            #cv2.imshow('image', img)
+            mkdir("./ORL/" + name)
+            cv2.imwrite("./ORL/" + name + os.sep + str(count) + '.jpg', gray[y: y + h, x: x + w])
+            cv2.imshow('image', img)
+            print("recording face " + str(count))
         k = cv2.waitKey(1)
         if k == 27:
             break
         elif count >= 10:
             break
+    camera.release()
     cv2.destroyAllWindows()
 
 if __name__ == '__main__':
 
-    #getFace()
+    #getFace("peter")
     #renameData
     preprocessing()
