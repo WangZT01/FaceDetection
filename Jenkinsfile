@@ -30,10 +30,34 @@ pipeline {
     }
     post {
         success {
-            setBuildStatus("Build succeeded", "SUCCESS");
+            script {
+                // 通知 GitHub 状态为成功
+                sh """
+                curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
+                     -H "Content-Type: application/json" \
+                     -d '{
+                            "state": "success",
+                            "description": "All tests passed",
+                            "context": "continuous-integration/jenkins"
+                         }' \
+                     $GITHUB_API_URL/repos/$REPO/statuses/$GIT_COMMIT
+                """
+            }
         }
         failure {
-            setBuildStatus("Build failed", "FAILURE");
+            script {
+                // 通知 GitHub 状态为失败
+                sh """
+                curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
+                     -H "Content-Type: application/json" \
+                     -d '{
+                            "state": "failure",
+                            "description": "Tests failed",
+                            "context": "continuous-integration/jenkins"
+                         }' \
+                     $GITHUB_API_URL/repos/$REPO/statuses/$GIT_COMMIT
+                """
+            }
         }
     }
 }
