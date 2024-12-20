@@ -63,9 +63,6 @@ def getFaceData(name):
             print("recording face " + str(count))
 
 
-
-
-
         k = cv2.waitKey(1)
         if k == 27:
             break
