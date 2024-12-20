@@ -12,7 +12,7 @@ pipeline {
             steps {
                 script {
 
-                    setGitHubPullRequestStatus state: 'PENDING',
+                    githubPRStatusPublisher state: 'PENDING',
                                                context: "${CONTEXT_NAME}",
                                                message: 'Checking out code...'
                     echo "Environment Variables:"
@@ -23,7 +23,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    setGitHubPullRequestStatus state: 'PENDING',
+                    githubPRStatusPublisher state: 'PENDING',
                                                context: "${CONTEXT_NAME}",
                                                message: 'Building the project...'
                     echo "Running tests..."
@@ -34,14 +34,14 @@ pipeline {
     post {
         success {
             script {
-                setGitHubPullRequestStatus state: 'SUCCESS',
+                githubPRStatusPublisher state: 'SUCCESS',
                                            context: "${CONTEXT_NAME}",
                                            message: 'Build succeeded!'
             }
         }
         failure {
             script {
-                setGitHubPullRequestStatus state: 'FAILURE',
+                githubPRStatusPublisher state: 'FAILURE',
                                            context: "${CONTEXT_NAME}",
                                            message: 'Build failed!'
             }
