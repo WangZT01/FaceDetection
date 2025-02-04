@@ -95,6 +95,8 @@ def recognize(database, testImage, eigenface, m, A):
     distance = []
     for i in range(0, trainNumber):
         q = projectedImage[:, i]
+
+
         temp = np.linalg.norm(projectedTestImage - q)
         distance.append(temp)
 
