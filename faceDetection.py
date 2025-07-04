@@ -3,6 +3,11 @@ import os
 
 
 def mkdir(path):
+    """
+    Create a directory if it does not exist.
+    Args:
+        path (str): The path of the directory to create.
+    """
     folder = os.path.exists(path)
 
     if not folder:
@@ -16,6 +21,9 @@ def mkdir(path):
 
 
 def preprocessing():
+    """
+    Detect faces in images under './FaceData/photos/' and save the cropped grayscale faces.
+    """
     filepath = './FaceData/photos/'
     fileList = os.listdir(filepath)
 
@@ -43,6 +51,11 @@ def preprocessing():
 
 
 def getFaceData(name):
+    """
+    Capture face images from the webcam and save them to './ORL/{name}/'.
+    Args:
+        name (str): The name of the person (used as folder name).
+    """
     camera = cv2.VideoCapture(0)
 
     faceDetector = cv2.CascadeClassifier('haarcascade_frontalface_alt2.xml')
@@ -80,5 +93,4 @@ def getFaceData(name):
 
 if __name__ == '__main__':
 
-    #getFace("peter")
     preprocessing()

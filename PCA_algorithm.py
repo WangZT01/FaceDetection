@@ -8,6 +8,13 @@ from pylab import mpl
 
 
 def img2vector(image):
+    """
+    Convert an image file to a 1D vector.
+    Args:
+        image (str): Path to the image file.
+    Returns:
+        numpy.ndarray: The image as a 1D vector.
+    """
     img = cv2.imread(image, 0)
     rows, cols = img.shape
     imgVector = np.zeros((1, rows * cols))
@@ -19,6 +26,13 @@ orlpath = "./ORL"
 
 
 def load_orl(k):
+    """
+    Load the ORL face dataset and split into training and testing sets.
+    Args:
+        k (int): Number of training images per person (1-9).
+    Returns:
+        tuple: (train_face, train_label, test_face, test_label)
+    """
     train_face = np.zeros((40 * k, 112 * 92))
     train_label = np.zeros(40 * k)
     test_face = np.zeros((40 * (10 - k), 112 * 92))
@@ -49,6 +63,14 @@ def load_orl(k):
 
 
 def PCA(data, r):
+    """
+    Perform Principal Component Analysis (PCA) on the data.
+    Args:
+        data (numpy.ndarray): The data matrix.
+        r (int): Number of principal components to retain.
+    Returns:
+        tuple: (final_data, data_mean, V_r)
+    """
     data = np.float32(np.mat(data))
     rows, cols = np.shape(data)
     data_mean = np.mean(data, 0)
@@ -58,13 +80,16 @@ def PCA(data, r):
     V_r = V[:, 0:r]
     V_r = A.T * V_r
     for i in range(r):
-        V_r[:, i] = V_r[:, i] / np.linalg.norm(V_r[:, i])  # 特征向量归一化
+        V_r[:, i] = V_r[:, i] / np.linalg.norm(V_r[:, i])  # Feature vector normalization
 
     final_data = A * V_r
     return final_data, data_mean, V_r
 
 
 def face_rec():
+    """
+    Perform face recognition on the ORL dataset using PCA and plot the accuracy for different k values.
+    """
     r = 30
     print("10d %d" % (r))
     x_value = []

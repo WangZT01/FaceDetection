@@ -1,6 +1,9 @@
 import cv2
 import os
 def renameData():
+    """
+    Rename all images in each subfolder of './FaceData/photos/' to a sequential number (1.jpg, 2.jpg, ...).
+    """
     filepath = './FaceData/photos/'
 
     fileList = os.listdir(filepath)

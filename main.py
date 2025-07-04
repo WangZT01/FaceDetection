@@ -14,6 +14,13 @@ resize image to given size
 
 
 def img_resize(image):
+    """
+    Resize the input image to 112x92 while maintaining aspect ratio.
+    Args:
+        image (numpy.ndarray): The input image.
+    Returns:
+        numpy.ndarray: The resized image.
+    """
     height, width = image.shape[0], image.shape[1]
 
     width_new = 112
@@ -28,6 +35,13 @@ def img_resize(image):
 
 
 def createDatabase(path):
+    """
+    Create a face image database from the given directory.
+    Args:
+        path (str): Path to the directory containing face images.
+    Returns:
+        tuple: (database dictionary, image matrix)
+    """
     datebase = dict()
     data_names = os.listdir(path)
 
@@ -63,11 +77,16 @@ def createDatabase(path):
 
 
 def eigenfaceCore(T):
-
+    """
+    Compute the eigenfaces from the training image matrix.
+    Args:
+        T (numpy.matrix): Matrix of training images.
+    Returns:
+        tuple: (eigenfaces, mean image, difference matrix)
+    """
     m = T.mean(axis=1)
     A = T - m
     L = (A.T) * (A)
-
 
     V, D = np.linalg.eig(L)
     L_eig = []
@@ -81,6 +100,17 @@ def eigenfaceCore(T):
 
 
 def recognize(database, testImage, eigenface, m, A):
+    """
+    Recognize the person in the test image using the eigenface method.
+    Args:
+        database (dict): Mapping from index to person name.
+        testImage (str): Path to the test image file.
+        eigenface (numpy.matrix): Matrix of eigenfaces.
+        m (numpy.matrix): Mean image.
+        A (numpy.matrix): Difference matrix.
+    Returns:
+        str: The recognized person's name.
+    """
     _, trainNumber = np.shape(eigenface)
 
     projectedImage = eigenface.T * (A)
@@ -96,10 +126,8 @@ def recognize(database, testImage, eigenface, m, A):
     for i in range(0, trainNumber):
         q = projectedImage[:, i]
 
-
         temp = np.linalg.norm(projectedTestImage - q)
         distance.append(temp)
-
 
     minDistance = min(distance)
     index = distance.index(minDistance)
@@ -108,6 +136,13 @@ def recognize(database, testImage, eigenface, m, A):
 
 
 def example(filename):
+    """
+    Example function to recognize a face from a given image file.
+    Args:
+        filename (str): Path to the test image file.
+    Returns:
+        str: The recognized person's name.
+    """
     database, T = createDatabase('./ORL/')
     eigenface, m, A = eigenfaceCore(T)
     testimage = filename
@@ -115,14 +150,18 @@ def example(filename):
     return (recognize(database, testimage, eigenface, m, A))
 
 
-
 def gui():
+    """
+    Launch the GUI for face detection and recognition.
+    """
     root = tk.Tk()
     root.title("pca face")
     root.geometry("500x500")
 
     def faceImport():
-
+        """
+        Import face data from webcam for the entered username.
+        """
         if usernameLabel.get() == '':
             tkinter.messagebox.showinfo(title='Hi', message='please input your username')
         else:
@@ -130,9 +169,17 @@ def gui():
         root.mainloop()
 
     def result(name):
-        tkinter.messagebox.showinfo(title='Hi', message='Hi！' + str(name))
+        """
+        Show a message box with the recognized name.
+        Args:
+            name (str): The recognized person's name.
+        """
+        tkinter.messagebox.showinfo(title='Hi', message='Hi! ' + str(name))
 
     def detection():
+        """
+        Perform face detection and recognition, and display the result in the GUI.
+        """
         filename = getFaceDataforRecognition()
         if filename != '':
             s = filename
@@ -143,7 +190,6 @@ def gui():
             result(name)
 
             root.mainloop()
-
 
     l = tk.Label(root)
     l.pack()
@@ -162,6 +208,11 @@ def gui():
 
 
 def getFaceDataforRecognition():
+    """
+    Capture a single face image from the webcam and save it to './testData/'.
+    Returns:
+        str: The file path of the saved face image.
+    """
     camera = cv2.VideoCapture(0)
 
     faceDetector = cv2.CascadeClassifier('haarcascade_frontalface_alt2.xml')

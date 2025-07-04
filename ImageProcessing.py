@@ -4,6 +4,9 @@ import numpy as np
 
 
 def renameData():
+    """
+    Rename all images in each subfolder of './FaceData/photos/' to a sequential number (1.jpg, 2.jpg, ...).
+    """
     filepath = './FaceData/photos/'
 
     fileList = os.listdir(filepath)
@@ -21,6 +24,9 @@ def renameData():
             n += 1
 
 def preprocessing():
+    """
+    Detect faces in images under './FaceData/photos/' and save the cropped grayscale faces.
+    """
     filepath = './FaceData/photos/'
     fileList = os.listdir(filepath)
 
@@ -45,9 +51,14 @@ def preprocessing():
                 cv2.imwrite(newPath + os.sep + 'gray_' + str(count) + '.jpg', gray[y: y + h, x: x + w])
 
 
-
-
 def img_resize(image):
+    """
+    Resize the input image to 112x96 while maintaining aspect ratio.
+    Args:
+        image (numpy.ndarray): The input image.
+    Returns:
+        numpy.ndarray: The resized image.
+    """
     height, width = image.shape[0], image.shape[1]
     width_new = 112
     height_new = 96
@@ -58,9 +69,12 @@ def img_resize(image):
     return img_new
 
 
-
-
 def getFace(name):
+    """
+    Capture face images from the webcam and save them to 'Facedata/User/'.
+    Args:
+        name (str): The name of the person (not used in the save path here).
+    """
     camera = cv2.VideoCapture(0)
 
     faceDetector = cv2.CascadeClassifier('haarcascade_frontalface_alt2.xml')
